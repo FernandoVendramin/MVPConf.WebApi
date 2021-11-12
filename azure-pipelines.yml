@@ -42,6 +42,7 @@ steps:
     arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/$(BuildConfiguration)/Output'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Unit Test'
   inputs:
     command: 'test'
     projects: 'MVPConf.Application.Test\MVPConf.Application.Test.csproj'
@@ -56,9 +57,10 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
   condition: succeeded()
+  enabled: false
     
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    PathtoPublish: '$(Build.BinariesDirectory)/$(BuildConfiguration)/Output/MVPConf.WebApi.zip'
     ArtifactName: 'webapi-artifact'
   condition: succeeded()
