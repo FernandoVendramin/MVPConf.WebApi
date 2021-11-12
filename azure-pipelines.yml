@@ -18,16 +18,26 @@ steps:
 - task: NuGetToolInstaller@1
   inputs:
    versionSpec: '5.x'
+  enabled: false
 
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
   inputs:
-    restoreSolution: '$(solution)'
+    command: 'restore'
+    projects: 'MVPConf.WebApi\MVPConf.WebApi.csproj'
+    restoreArguments: '-c $(BuildConfiguration)'
+    feedsToUse: 'select'
 
-- task: MSBuild@1
+- task: DotNetCoreCLI@2
   inputs:
-    solution: 'MVPConf.WebApi\MVPConf.WebApi.csproj'
-    configuration: '$(BuildConfiguration)'
-    msbuildArguments: '/p:OutputPath=$(build.binariesdirectory)/$(BuildConfiguration)/Output'
+    command: 'build'
+    projects: 'MVPConf.WebApi\MVPConf.WebApi.csproj'
+    arguments: '-c $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/$(BuildConfiguration)/Output'
 
 - task: DotNetCoreCLI@2
   inputs:
