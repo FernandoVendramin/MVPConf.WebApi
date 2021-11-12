@@ -31,3 +31,10 @@ steps:
   inputs:
     command: 'test'
     projects: 'MVPConf.Application.Test\MVPConf.Application.Test.csproj'
+  condition: succeeded()
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'webapi-artifact'
+  condition: succeeded()
