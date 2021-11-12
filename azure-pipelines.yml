@@ -26,6 +26,7 @@ steps:
 - task: MSBuild@1
   inputs:
     solution: 'MVPConf.WebApi.sln'
+    msbuildArguments: '/p:OutputPath=$(build.binariesdirectory)/$(BuildConfiguration)/Output'
     
 - task: DotNetCoreCLI@2
   inputs:
@@ -35,6 +36,6 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: '$(build.binariesdirectory)/$(BuildConfiguration)/Output'
     ArtifactName: 'webapi-artifact'
   condition: succeeded()
