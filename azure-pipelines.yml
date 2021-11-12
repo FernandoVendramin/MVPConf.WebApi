@@ -25,17 +25,27 @@ steps:
 
 - task: MSBuild@1
   inputs:
-    solution: 'MVPConf.WebApi.sln'
+    solution: 'MVPConf.WebApi\MVPConf.WebApi.csproj'
     msbuildArguments: '/p:OutputPath=$(build.binariesdirectory)/$(BuildConfiguration)/Output'
-    
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
     projects: 'MVPConf.Application.Test\MVPConf.Application.Test.csproj'
   condition: succeeded()
 
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)/$(BuildConfiguration)/Output'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+  condition: succeeded()
+    
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(build.binariesdirectory)/$(BuildConfiguration)/Output'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     ArtifactName: 'webapi-artifact'
   condition: succeeded()
