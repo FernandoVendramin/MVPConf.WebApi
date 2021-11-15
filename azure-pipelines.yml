@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2019'
 
 variables:
   solution: 'MVPConf.WebApi.sln'
@@ -19,7 +19,7 @@ steps:
   inputs:
    versionSpec: '5.x'
   enabled: false
-
+   
 - task: DotNetCoreCLI@2
   displayName: 'Restore'
   inputs:
@@ -47,7 +47,6 @@ steps:
     command: 'test'
     projects: 'MVPConf.Application.Test\MVPConf.Application.Test.csproj'
   condition: succeeded()
-
 
 - task: ArchiveFiles@2
   inputs:
