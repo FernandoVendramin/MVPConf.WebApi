@@ -14,55 +14,53 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
-jobs:
-- job: Build
-  steps:
-  - task: DotNetCoreCLI@2
-    displayName: 'Restore'
-    inputs:
-      command: 'restore'
-      projects: 'MVPConf.WebApi\MVPConf.WebApi.csproj'
-      feedsToUse: 'select'
+steps:
+- task: NuGetToolInstaller@1
+  inputs:
+   versionSpec: '5.x'
+  enabled: false
 
-  - task: DotNetCoreCLI@2
-    displayName: 'Build'
-    inputs:
-      command: 'build'
-      projects: 'MVPConf.WebApi\MVPConf.WebApi.csproj'
-      arguments: '-c $(BuildConfiguration)'
+- task: DotNetCoreCLI@2
+  displayName: 'Restore'
+  inputs:
+    command: 'restore'
+    projects: 'MVPConf.WebApi\MVPConf.WebApi.csproj'
+    feedsToUse: 'select'
 
-  - task: DotNetCoreCLI@2
-    displayName: 'Publish'
-    inputs:
-      command: 'publish'
-      publishWebProjects: true
-      arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/$(BuildConfiguration)/Output'
+- task: DotNetCoreCLI@2
+  displayName: 'Build'
+  inputs:
+    command: 'build'
+    projects: 'MVPConf.WebApi\MVPConf.WebApi.csproj'
+    arguments: '-c $(BuildConfiguration)'
 
-- job: Test
-  dependsOn: Build
-  steps:
-  - task: DotNetCoreCLI@2
-    displayName: 'Unit Test'
-    inputs:
-      command: 'test'
-      projects: 'MVPConf.Application.Test\MVPConf.Application.Test.csproj'
-    condition: succeeded()
+- task: DotNetCoreCLI@2
+  displayName: 'Publish'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/$(BuildConfiguration)/Output'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Unit Test'
+  inputs:
+    command: 'test'
+    projects: 'MVPConf.Application.Test\MVPConf.Application.Test.csproj'
+  condition: succeeded()
+
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)/$(BuildConfiguration)/Output'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+  condition: succeeded()
+  enabled: false
     
-- job: Publish
-  dependsOn: Test
-  steps:
-  - task: ArchiveFiles@2
-    inputs:
-      rootFolderOrFile: '$(Build.BinariesDirectory)/$(BuildConfiguration)/Output'
-      includeRootFolder: false
-      archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-      replaceExistingArchive: true
-    condition: succeeded()
-    enabled: false
-    
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.BinariesDirectory)/$(BuildConfiguration)/Output/MVPConf.WebApi.zip'
-      ArtifactName: 'webapi-artifact'
-    condition: succeeded()
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.BinariesDirectory)/$(BuildConfiguration)/Output/MVPConf.WebApi.zip'
+    ArtifactName: 'webapi-artifact'
+  condition: succeeded()
