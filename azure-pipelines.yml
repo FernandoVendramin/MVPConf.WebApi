@@ -17,12 +17,6 @@ variables:
 jobs:
 - job: Build
   steps:
-  - task: NuGetToolInstaller@1
-    displayName: 'Install Nuget'
-    inputs:
-    versionSpec: '5.x'
-    enabled: false
-
   - task: DotNetCoreCLI@2
     displayName: 'Restore'
     inputs:
