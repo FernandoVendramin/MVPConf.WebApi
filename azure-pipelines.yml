@@ -15,11 +15,6 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
-  inputs:
-   versionSpec: '5.x'
-  enabled: false
-   
 - task: DotNetCoreCLI@2
   displayName: 'Restore'
   inputs:
@@ -33,7 +28,7 @@ steps:
     command: 'build'
     projects: 'MVPConf.WebApi\MVPConf.WebApi.csproj'
     arguments: '-c $(BuildConfiguration)'
-
+   
 - task: DotNetCoreCLI@2
   displayName: 'Publish'
   inputs:
